@@ -1042,12 +1042,14 @@ class BasePlugin:
                     sValue = str(payload)
             else:
                 sValue = str(message)
-                if sValue.isnumeric():
-                    nValue = int(sValue)
+        try:
+            nValue = int(float(sValue))
+        except ValueError:
+            pass
 
         if nValue != device.nValue or sValue != device.sValue:
             Domoticz.Log(
-                "{}: Topic: '{}' Setting nValue: {}->{}, sValue: {}->{}".format(
+                "{}: updateSensor, Topic: '{}' Setting nValue: {}->{}, sValue: {}->{}".format(
                     self.deviceStr(self.getUnit(device)),
                     topic,
                     repr(device.nValue),
@@ -1268,6 +1270,11 @@ class BasePlugin:
             Domoticz.Log(traceback.format_exc())
 
         sValue = str(sValue)
+        try:
+            nValue = int(float(sValue))
+        except ValueError:
+            pass
+
         if updatedevice:
             if updatecolor:
                 # Do not update if we got Tasmota periodic
@@ -1275,7 +1282,7 @@ class BasePlugin:
                 if not isTeleTopic or nValue != device.nValue or \
                         sValue != device.sValue:
                     Domoticz.Log(
-                        "{}: Topic: '{}' Setting nValue: {}->{}, "
+                        "{}: updateSwitch, Topic: '{}' Setting nValue: {}->{}, "
                         "sValue: {}->{}, color: {}->{}".format(
                             self.deviceStr(self.getUnit(device)),
                             topic,
